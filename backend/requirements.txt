@@ -6,5 +6,5 @@ supabase
 diffusers
 torch
 Pillow
-
-huggingface-hub~=0.29.1
+openai
+elevenlabs
