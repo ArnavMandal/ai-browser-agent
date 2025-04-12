@@ -6,3 +6,4 @@ supabase
 diffusers
 torch
 Pillow
+openai
