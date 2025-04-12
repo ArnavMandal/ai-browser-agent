@@ -6,5 +6,6 @@ supabase
 diffusers
 torch
 Pillow
-openai
 elevenlabs
+python-dotenv
+google-genai
