@@ -7,7 +7,8 @@ body, h1, p, label, select, button {
   
   /* Overall popup container */
   .popup-container {
-    width: 400px;
+    width: 800px;
+    min-width: 800px;
     max-width: 100%;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background-color: #ffffff;
@@ -166,6 +167,47 @@ body, h1, p, label, select, button {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   }
   
+  /* Feature quick access buttons */
+  .feature-buttons {
+    display: flex;
+    gap: 16px;
+    margin-top: 15px;
+    justify-content: space-between;
+  }
+  
+  .feature-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 18px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: white;
+    color: #64748b;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  .feature-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-color: #c7d2fe;
+  }
+  
+  .feature-btn svg {
+    color: #6366f1;
+    transition: transform 0.2s ease;
+  }
+  
+  .feature-btn:hover svg {
+    transform: scale(1.1);
+  }
+  
   /* Primary button */
   .primary-btn {
     display: flex;
@@ -233,10 +275,10 @@ body, h1, p, label, select, button {
   .popup-result {
     background-color: #f9fafb;
     border-radius: 10px;
-    padding: 16px;
-    font-size: 14px;
+    padding: 20px;
+    font-size: 15px;
     color: #1a1a1a;
-    max-height: 300px;
+    max-height: 400px;
     overflow-y: auto;
     animation: fadeIn 0.5s forwards;
     line-height: 1.6;
@@ -254,22 +296,45 @@ body, h1, p, label, select, button {
   /* Audio player */
   .audio-player {
     margin-top: 16px;
-    padding: 16px;
+    padding: 20px;
     background: #f3f4f6;
     border-radius: 10px;
     animation: slideUp 0.3s ease-out;
     border: 1px solid #e5e7eb;
+    display: block;
   }
   
   .audio-player.hidden {
-    display: none;
+    display: none !important;
+  }
+  
+  .audio-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: #4b5563;
+    margin-bottom: 12px;
+  }
+  
+  .audio-container {
+    background: white;
+    border-radius: 8px;
+    padding: 10px;
+    border: 1px solid #e5e7eb;
+  }
+  
+  .audio-status {
+    font-size: 14px;
+    color: #6b7280;
+    margin-top: 8px;
+    text-align: center;
   }
   
   .audio-player audio {
     width: 100%;
-    height: 40px;
+    height: 48px;
     outline: none;
-    border-radius: 8px;
+    border-radius: 4px;
+    display: block;
   }
   
   /* Storybook view */
@@ -291,7 +356,7 @@ body, h1, p, label, select, button {
     align-items: center;
     justify-content: center;
     gap: 16px;
-    padding: 12px;
+    padding: 14px;
     background: linear-gradient(to right, #f5f7fa, #f9fafb);
     border-bottom: 1px solid #e5e7eb;
   }
@@ -300,8 +365,8 @@ body, h1, p, label, select, button {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     border: none;
     border-radius: 50%;
     background: white;
@@ -328,26 +393,27 @@ body, h1, p, label, select, button {
   }
   
   #page-indicator {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 500;
     color: #64748b;
   }
   
   .storybook-content {
     display: flex;
-    flex-direction: column;
-    gap: 16px;
-    padding: 20px;
+    flex-direction: row;
+    gap: 24px;
+    padding: 24px;
     background: white;
   }
   
   .storybook-image {
-    width: 100%;
-    height: 200px;
+    width: 350px;
+    height: 280px;
     background: #f3f4f6;
     border-radius: 8px;
     overflow: hidden;
     position: relative;
+    flex-shrink: 0;
   }
   
   .storybook-image img {
@@ -362,9 +428,10 @@ body, h1, p, label, select, button {
   }
   
   .storybook-text {
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.7;
     color: #374151;
+    flex: 1;
   }
   
   /* Keyframes for animations */
