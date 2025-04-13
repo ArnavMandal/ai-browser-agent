@@ -3,6 +3,26 @@ import uuid
 from PIL import Image
 from io import BytesIO
 from supabase import create_client
+import google.generativeai as genai
+
+# === Gemini Config ===
+GEMINI_API_KEY = "AIzaSyCpC1GhKGguCu_xa_Snm-sWunAspEo9e2s"
+genai.configure(api_key=GEMINI_API_KEY)
+gemini_model = genai.GenerativeModel("gemini-1.5-flash")
+
+def get_image_prompt_from_gemini(story_text):
+    gemini_prompt = (
+        "Based on the following children's storybook passage, "
+        "describe a visual scene that could be illustrated in cartoon style. "
+        "Avoid any text, labels, or symbols in the image. Focus on people, setting, objects, and actions.\n\n"
+        f"{story_text}"
+    )
+    try:
+        response = gemini_model.generate_content(gemini_prompt)
+        return response.text.strip()
+    except Exception as e:
+        print(f"⚠️ Gemini API error: {e}")
+        return story_text  # fallback to original description
 
 def generate_images_and_upload():
     # === Supabase Config ===
@@ -31,17 +51,32 @@ def generate_images_and_upload():
 
     # === Prompts to Generate
     descriptions = [
-        "Harold was riding a bike.",
-        "A witch flew over the village at night."
+        "Once upon a time, in a big, tall building called the White House, lived a man named Donald. Donald loved things made in America, like juicy apples from Washington and shiny toy cars from Detroit. But he noticed that many toys in the toy shop came from far away lands, like China and Mexico.",
+        """
+        Donald had a big idea! "I'll put a special fee, called a tariff, on toys from other countries!" he said. "That way, people will buy more toys made right here in America!" He imagined children playing with bright red wagons and cuddly teddy bears, all made in the USA.
+        """,
+        """
+        Soon, the toy shop started to change. The toys from far away became more expensive. A little girl named Lily wanted a beautiful doll from France, but her father said, "Oh, dear, that doll costs more now because of the special fee." Lily frowned.
+        """,
+        """
+        A kind toy maker named Mr. Chen, who made wonderful wooden trains in China, was very sad. "It costs more to send my trains to America now," he said. "I might have to make fewer trains, and some of my friends might lose their jobs."
+        """,
+        """
+        Some people were happy because they bought more toys made in America. But other people, like Lily and Mr. Chen, were not so happy. They learned that when things change, it can help some people but also make things harder for others. And that's a very important thing to remember.
+        """
     ]
 
     image_urls = []
 
     for i, desc in enumerate(descriptions):
-        print(f"🔄 Generating image for: {desc[:50]}")
+        print(f"\n🔄 Generating image for: {desc[:50]}")
 
-        # Generate image from prompt
-        data = {"prompt": "Cartoon style: " + desc}
+        # Get visual-only description from Gemini
+        visual_prompt = get_image_prompt_from_gemini(desc)
+        print(f"🎨 Gemini visual prompt: {visual_prompt}")
+
+        # Generate image from Gemini-generated visual prompt
+        data = {"prompt": "Cartoon style illustration: " + visual_prompt}
         response = requests.post(clipdrop_url, headers=clipdrop_headers, json=data)
 
         if response.status_code == 200:
@@ -80,6 +115,7 @@ def generate_images_and_upload():
 
     return image_urls
 
+# Run the full generation process
 urls = generate_images_and_upload()
 print("\n🖼️ Uploaded Image URLs:")
 for url in urls:

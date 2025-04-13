@@ -4,6 +4,7 @@ import requests
 from concurrent.futures import TimeoutError
 from functools import partial
 import signal
+import re
 
 class TimeoutException(Exception):
     pass
@@ -21,6 +22,23 @@ def text_to_speech(text, output_file="output.mp3", voice_id="EXAVITQu4vr4xnSDxMa
         voice_id (str): Voice ID to use
         timeout (int): Timeout in seconds
     """
+    # Ensure text is a string - handle both generator objects and other non-string types
+    if not isinstance(text, str):
+        try:
+            # If it's an iterable/generator, convert to a list and join
+            if hasattr(text, '__iter__') and not isinstance(text, (str, bytes, bytearray)):
+                text = ' '.join(list(text))
+            else:
+                text = str(text)
+        except Exception as e:
+            print(f"Error converting text to string: {e}")
+            return None
+    
+    # Remove any sound effect or formatting instructions from the text
+    # These patterns like **(Sound Effect: ...)** can cause issues with TTS
+    text = re.sub(r'\*\*\([^)]+\)\*\*', '', text)
+    text = re.sub(r'\*\*Host:\*\*', 'Host:', text)
+    
     client = ElevenLabs(api_key="sk_7d6914011e75677178bcd9c90156a84f2a2dafaaae1ab897")
     
     # Set up timeout handler
@@ -37,8 +55,24 @@ def text_to_speech(text, output_file="output.mp3", voice_id="EXAVITQu4vr4xnSDxMa
                 voice=voice_id
             )
             
+            # Handle the audio based on its type
             with open(output_file, "wb") as f:
-                f.write(audio)
+                # If it's a generator (streaming response), consume it chunk by chunk
+                if hasattr(audio, '__iter__') and not isinstance(audio, (bytes, bytearray)):
+                    print("Detected generator response, consuming chunks...")
+                    for chunk in audio:
+                        if chunk:
+                            f.write(chunk)
+                # If it's already bytes, write directly
+                elif isinstance(audio, (bytes, bytearray)):
+                    f.write(audio)
+                # If it's some other object with read method (like a file-like object)
+                elif hasattr(audio, 'read'):
+                    f.write(audio.read())
+                else:
+                    print(f"Unknown audio type: {type(audio)}")
+                    return None
+            
             print(f"Success! Audio saved to {output_file}")
             return output_file
             
@@ -56,6 +90,22 @@ def text_to_speech(text, output_file="output.mp3", voice_id="EXAVITQu4vr4xnSDxMa
 
 def text_to_speech_http(text, output_file, voice_id, timeout):
     """Fallback using direct HTTP API with timeout"""
+    # Ensure text is a string - handle both generator objects and other non-string types
+    if not isinstance(text, str):
+        try:
+            # If it's an iterable/generator, convert to a list and join
+            if hasattr(text, '__iter__') and not isinstance(text, (str, bytes, bytearray)):
+                text = ' '.join(list(text))
+            else:
+                text = str(text)
+        except Exception as e:
+            print(f"Error converting text to string in HTTP fallback: {e}")
+            return None
+    
+    # Remove any sound effect or formatting instructions from the text
+    text = re.sub(r'\*\*\([^)]+\)\*\*', '', text)
+    text = re.sub(r'\*\*Host:\*\*', 'Host:', text)
+            
     try:
         url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
         headers = {
@@ -70,11 +120,16 @@ def text_to_speech_http(text, output_file, voice_id, timeout):
             }
         }
         
-        response = requests.post(url, json=data, headers=headers, timeout=timeout)
+        # Use stream=True to get a streaming response
+        response = requests.post(url, json=data, headers=headers, timeout=timeout, stream=True)
         response.raise_for_status()
         
         with open(output_file, "wb") as f:
-            f.write(response.content)
+            # Write the content in chunks to handle large responses
+            for chunk in response.iter_content(chunk_size=1024):
+                if chunk:
+                    f.write(chunk)
+                    
         print(f"HTTP fallback success! Saved to {output_file}")
         return output_file
         
