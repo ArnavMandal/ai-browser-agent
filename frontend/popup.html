@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Browser Agent</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="popup-container">
+    <header class="popup-header">
+      <h1>AI Browser Agent</h1>
+      <p>Need help understanding an article? Let me simplify it for you!</p>
+    </header>
+
+    <section class="popup-controls">
+      <label for="explain-level">Reading Level: <span id="level-value">8</span></label>
+      <input type="range" id="explain-level" min="6" max="12" value="8" step="1">
+      <button id="extract-btn">Extract & Simplify</button>
+    </section>
+
+    <section id="result" class="popup-result">
+      <!-- The simplified text will be displayed here -->
+    </section>
+
+    <footer class="popup-footer">
+      <small>Powered by AI</small>
+    </footer>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
