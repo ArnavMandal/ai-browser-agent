@@ -1,4 +1,4 @@
-from elevenlabs import generate, save, set_api_key
+from elevenlabs.client import ElevenLabs
 import sys
 import requests
 from concurrent.futures import TimeoutError
@@ -11,7 +11,7 @@ class TimeoutException(Exception):
 def timeout_handler(signum, frame):
     raise TimeoutException("API call timed out")
 
-def text_to_speech(text, output_file="output.mp3", voice_id="Sarah", timeout=30):
+def text_to_speech(text, output_file="output.mp3", voice_id="EXAVITQu4vr4xnSDxMaL", timeout=30):
     """
     Convert text to speech with proper timeout handling
     
@@ -21,7 +21,7 @@ def text_to_speech(text, output_file="output.mp3", voice_id="Sarah", timeout=30)
         voice_id (str): Voice ID to use
         timeout (int): Timeout in seconds
     """
-    set_api_key("api")  # Replace with your actual API key
+    client = ElevenLabs(api_key="sk_7d6914011e75677178bcd9c90156a84f2a2dafaaae1ab897")
     
     # Set up timeout handler
     signal.signal(signal.SIGALRM, timeout_handler)
@@ -32,12 +32,13 @@ def text_to_speech(text, output_file="output.mp3", voice_id="Sarah", timeout=30)
         
         try:
             # Generate audio with timeout protection
-            audio = generate(
+            audio = client.generate(
                 text=text,
                 voice=voice_id
             )
             
-            save(audio, output_file)
+            with open(output_file, "wb") as f:
+                f.write(audio)
             print(f"Success! Audio saved to {output_file}")
             return output_file
             
@@ -58,7 +59,7 @@ def text_to_speech_http(text, output_file, voice_id, timeout):
     try:
         url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
         headers = {
-            "xi-api-key": "api",
+            "xi-api-key": "sk_7d6914011e75677178bcd9c90156a84f2a2dafaaae1ab897",
             "Content-Type": "application/json"
         }
         data = {

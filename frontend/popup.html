@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AI Browser Agent</title>
   <link rel="stylesheet" href="styles.css">
+  <!-- Add Framer Motion -->
+  <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
 </head>
 <body>
   <div class="popup-container">
@@ -14,13 +16,42 @@
     </header>
 
     <section class="popup-controls">
-      <label for="explain-level">Reading Level: <span id="level-value">8</span></label>
-      <input type="range" id="explain-level" min="6" max="12" value="8" step="1">
-      <button id="extract-btn">Extract & Simplify</button>
+      <div class="control-group">
+        <label for="explain-level">Reading Level: <span id="level-value">8</span></label>
+        <div class="slider-container">
+          <input type="range" id="explain-level" min="6" max="12" value="8" step="1">
+          <div class="slider-marks">
+            <span>6</span>
+            <span>8</span>
+            <span>10</span>
+            <span>12</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-type-group">
+        <label>Content Type:</label>
+        <div class="button-group">
+          <button class="content-type-btn active" data-type="simplify">Simplify</button>
+          <button class="content-type-btn" data-type="podcast">Podcast</button>
+          <button class="content-type-btn" data-type="quiz">Quiz</button>
+        </div>
+      </div>
+
+      <button id="extract-btn" class="primary-btn">
+        <span class="btn-text">Extract & Process</span>
+        <span class="loading-spinner hidden"></span>
+      </button>
     </section>
 
     <section id="result" class="popup-result">
-      <!-- The simplified text will be displayed here -->
+      <!-- The processed content will be displayed here -->
+    </section>
+
+    <section id="audio-player" class="audio-player hidden">
+      <audio id="podcast-audio" controls>
+        Your browser does not support the audio element.
+      </audio>
     </section>
 
     <footer class="popup-footer">
