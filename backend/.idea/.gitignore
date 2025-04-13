@@ -6,3 +6,15 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+# Ignore virtual environment
+/venv/
+
+# Ignore node_modules if using Node (for TS/webpack files)
+/node_modules/
+
+# Ignore build outputs
+/dist/
+/build/
+
+# Ignore local config files
+*.env
