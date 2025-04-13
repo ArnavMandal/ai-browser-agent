@@ -5,7 +5,6 @@ from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from text_extractor import extract_clean_text_from_url
 from simplify_text import simplify_text
-from image_gen import generate_images_and_upload
 from image_gen import generate_storybook_images
 from tts import text_to_speech
 import os
@@ -37,16 +36,13 @@ async def process_url(req: URLRequest):
     
     # Get the simplified text for all modes
     simplified = simplify_text(raw_text, req.level, req.mode)
-    urls = generate_images_and_upload(simplified)
+    #urls = generate_images_and_upload(simplified)
     
-    print("\n🖼️ Uploaded Image URLs:")
-    for url in urls:
-        print(url)
-    
-    return {
-        "raw": raw_text,
-        "simplified": simplified,
-    }
+
+    #return {
+    #    "raw": raw_text,
+    #    "simplified": simplified,
+    #}
     
     if req.mode == "podcast":
         # Generate unique filename for the audio

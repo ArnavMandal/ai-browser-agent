@@ -16,7 +16,7 @@ SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 BUCKET_NAME = "storybook-images"
 
 # === ClipDrop Config ===
-CLIPDROP_API_KEY = "edb4e929c5c2cf43705efff83482e761b64859d419df2d181807006a56080e0fe5d818fdf336c45458eebb0e22bf7f5e"
+CLIPDROP_API_KEY = "d1faac072364616a3f125fef6b76c3394370d0c389b3b4647205959ddc4f02ed2acf31f9fffe8b6275e37caab648697e"
 clipdrop_url = "https://clipdrop-api.co/text-to-image/v1"
 clipdrop_headers = {
     "x-api-key": CLIPDROP_API_KEY,
@@ -130,54 +130,3 @@ def generate_storybook_images(story_sections):
     
     return image_urls
 
-def generate_images_and_upload():
-    """Legacy function to generate images from hardcoded descriptions"""
-    supabase = init_supabase()
-    
-    # Clear all files from the bucket before running
-    clear_bucket(supabase)
-
-    # Prompts to Generate
-    descriptions = [
-        "Once upon a time, in a big, tall building called the White House, lived a man named Donald. Donald loved things made in America, like juicy apples from Washington and shiny toy cars from Detroit. But he noticed that many toys in the toy shop came from far away lands, like China and Mexico.",
-        """
-        Donald had a big idea! "I'll put a special fee, called a tariff, on toys from other countries!" he said. "That way, people will buy more toys made right here in America!" He imagined children playing with bright red wagons and cuddly teddy bears, all made in the USA.
-        """,
-        """
-        Soon, the toy shop started to change. The toys from far away became more expensive. A little girl named Lily wanted a beautiful doll from France, but her father said, "Oh, dear, that doll costs more now because of the special fee." Lily frowned.
-        """,
-        """
-        A kind toy maker named Mr. Chen, who made wonderful wooden trains in China, was very sad. "It costs more to send my trains to America now," he said. "I might have to make fewer trains, and some of my friends might lose their jobs."
-        """,
-        """
-        Some people were happy because they bought more toys made in America. But other people, like Lily and Mr. Chen, were not so happy. They learned that when things change, it can help some people but also make things harder for others. And that's a very important thing to remember.
-        """
-    ]
-
-    image_urls = []
-
-    for i, desc in enumerate(descriptions):
-        print(f"\n🔄 Generating image for: {desc[:50]}")
-        
-        # Generate image
-        image_data = generate_image_from_text(desc)
-        if image_data:
-            url = upload_image_to_supabase(image_data, supabase)
-            if url:
-                image_urls.append(url)
-
-    return image_urls
-
-#urls = generate_images_and_upload()
-#print("\n🖼️ Uploaded Image URLs:")
-#for url in urls:
-#    print(url)
-
-def parse_story(text):
-    return text.split("???")
-if __name__ == "__main__":
-    # Run the full generation process
-    urls = generate_images_and_upload()
-    print("\n🖼️ Uploaded Image URLs:")
-    for url in urls:
-        print(url)

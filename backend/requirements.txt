@@ -9,3 +9,4 @@ Pillow
 openai
 elevenlabs
 supabase
+google-genai
