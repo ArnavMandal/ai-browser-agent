@@ -12,7 +12,7 @@ class TimeoutException(Exception):
 def timeout_handler(signum, frame):
     raise TimeoutException("API call timed out")
 
-def text_to_speech(text, output_file="output.mp3", voice_id="EXAVITQu4vr4xnSDxMaL", timeout=30):
+def text_to_speech(text, output_file="output.mp3", voice_id="EXAVITQu4vr4xnSDxMaL", timeout=60):
     """
     Convert text to speech with proper timeout handling
     
@@ -22,79 +22,40 @@ def text_to_speech(text, output_file="output.mp3", voice_id="EXAVITQu4vr4xnSDxMa
         voice_id (str): Voice ID to use
         timeout (int): Timeout in seconds
     """
-    # Ensure text is a string - handle both generator objects and other non-string types
     if not isinstance(text, str):
         try:
-            # If it's an iterable/generator, convert to a list and join
-            if hasattr(text, '__iter__') and not isinstance(text, (str, bytes, bytearray)):
-                text = ' '.join(list(text))
-            else:
-                text = str(text)
+            text = ' '.join(list(text)) if hasattr(text, '__iter__') else str(text)
         except Exception as e:
             print(f"Error converting text to string: {e}")
             return None
-    
-    # Remove any sound effect or formatting instructions from the text
-    # These patterns like **(Sound Effect: ...)** can cause issues with TTS
+
     text = re.sub(r'\*\*\([^)]+\)\*\*', '', text)
-    
-    client = ElevenLabs(api_key="sk_7d6914011e75677178bcd9c90156a84f2a2dafaaae1ab897")
-    
-    # Set up timeout handler
-    signal.signal(signal.SIGALRM, timeout_handler)
-    signal.alarm(timeout)
-    
+
     try:
         print(f"Generating speech for: {text[:50]}...")
-        
-        try:
-            # Generate audio with timeout protection
-            audio = client.generate(
-                text=text,
-                voice=voice_id
-            )
-            
-            # Handle generator response by consuming it
-            if hasattr(audio, '__iter__') and not isinstance(audio, (bytes, bytearray)):
-                print("Converting generator to bytes...")
-                audio_bytes = b''
-                for chunk in audio:
-                    if isinstance(chunk, bytes):
-                        audio_bytes += chunk
-                    else:
-                        print(f"Warning: Non-bytes chunk in generator: {type(chunk)}")
-                audio = audio_bytes
-            
-            # Final type check before saving
-            if not isinstance(audio, (bytes, bytearray)):
-                print(f"Error: Expected bytes from ElevenLabs, got {type(audio)}")
-                if hasattr(audio, 'read'):  # If it's file-like
-                    audio = audio.read()
-                else:
-                    print("Falling back to HTTP API as response type is unexpected")
-                    return text_to_speech_http(text, output_file, voice_id, timeout)
-            
-            # Save only if we have valid audio bytes
-            if isinstance(audio, (bytes, bytearray)) and len(audio) > 100:  # Sanity check for minimum size
-                with open(output_file, "wb") as f:
-                    f.write(audio)
-                print(f"Success! Audio saved to {output_file}")
-                return output_file
-            else:
-                print(f"Error: Audio data too small or invalid: {len(audio) if isinstance(audio, (bytes, bytearray)) else type(audio)}")
-                return text_to_speech_http(text, output_file, voice_id, timeout)
-            
-        except TimeoutException:
-            print(f"Timeout after {timeout} seconds - switching to HTTP API")
+
+        client = ElevenLabs(api_key="sk_7d6914011e75677178bcd9c90156a84f2a2dafaaae1ab897")
+        audio = client.generate(text=text, voice=voice_id)
+
+        # Combine generator output if needed
+        if hasattr(audio, '__iter__'):
+            audio_bytes = b''.join(chunk for chunk in audio if isinstance(chunk, bytes))
+        else:
+            audio_bytes = audio if isinstance(audio, (bytes, bytearray)) else audio.read()
+
+        if audio_bytes and len(audio_bytes) > 100:
+            with open(output_file, "wb") as f:
+                f.write(audio_bytes)
+            print(f"Success! Audio saved to {output_file}")
+            return output_file
+        else:
+            print(f"Audio too small, falling back to HTTP.")
             return text_to_speech_http(text, output_file, voice_id, timeout)
-            
-        except Exception as e:
-            print(f"Error: {type(e).__name__}: {e}")
-            return text_to_speech_http(text, output_file, voice_id, timeout)
-            
-    finally:
-        # Disable the alarm
-        signal.alarm(0)
+
+    except Exception as e:
+        print(f"TTS Error: {e}")
+        return text_to_speech_http(text, output_file, voice_id, timeout)
+    
 
 def text_to_speech_http(text, output_file, voice_id, timeout):
     """Fallback using direct HTTP API with timeout"""
