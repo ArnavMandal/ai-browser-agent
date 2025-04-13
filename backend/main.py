@@ -14,7 +14,7 @@ class URLRequest(BaseModel):
 async def process_url(req: URLRequest):
     raw_text = extract_clean_text_from_url(req.url)
     # Simplify the text using the provided reading level
-    simplified = simplify_text(raw_text, req.level)
+    simplified = simplify_text(raw_text, req.level, req.mode)
 
     return {
         "raw": raw_text,
