@@ -1,0 +1,19 @@
+{
+    "manifest_version": 3,
+    "name": "AI Browser Agent",
+    "version": "1.0",
+    "description": "Extracts webpage text and generates simplified explanations, audio, and images.",
+    "action": {
+      "default_popup": "popup.html",
+      "default_title": "AI Browser Agent"
+    },
+    "permissions": [
+      "activeTab",
+      "scripting",
+      "storage"
+    ],
+    "host_permissions": [
+      "<all_urls>"
+    ]
+  }
+  
