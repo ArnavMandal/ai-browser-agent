@@ -2,36 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Storybook View</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>StorySimplify - Storybook</title>
+  <link rel="stylesheet" href="storybook.css" />
 </head>
 <body>
-  <div class="popup-container">
-    <div class="popup-header">
-      <h1>StorySimplify</h1>
+  <div class="storybook-container">
+    <header class="storybook-header">
+      <h1>📚 Story Time!</h1>
       <p id="mode-display">Loading...</p>
-    </div>
-    <div class="popup-result" id="result">Preparing content...</div>
+    </header>
 
-    <div id="audio-player" class="audio-player hidden">
-      <div class="audio-title">Podcast</div>
-      <div class="audio-container">
-        <audio id="podcast-audio" controls></audio>
-      </div>
-      <div class="audio-status">Preparing...</div>
-    </div>
-
-    <div id="storybook-view" class="storybook-view hidden">
-      <div class="storybook-navigation">
-        <button id="prev-page" class="nav-btn">◀</button>
-        <span id="page-indicator">Page</span>
-        <button id="next-page" class="nav-btn">▶</button>
-      </div>
-      <div class="storybook-content">
+    <main class="storybook-main">
+      <div class="storybook-page">
         <div class="storybook-image"></div>
         <div class="storybook-text"></div>
       </div>
-    </div>
+      <div id="page-indicator">Page</div>
+      <div class="storybook-nav">
+        <button id="prev-page">← Back</button>
+        <button id="next-page">Next →</button>
+      </div>
+    </main>
   </div>
 
   <script src="storybook.js"></script>

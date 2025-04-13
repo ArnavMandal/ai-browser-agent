@@ -57,14 +57,35 @@ document.getElementById('next-page').addEventListener('click', () => {
   document.getElementById("mode-display").textContent = `Mode: ${mode}`;
 
   try {
-    const data = await fetchContent(mode, url, level);
     const resultElement = document.getElementById('result');
     const storybookView = document.getElementById('storybook-view');
     const audioPlayer = document.getElementById('audio-player');
     const podcastAudio = document.getElementById('podcast-audio');
     const audioStatus = document.querySelector('.audio-status');
 
-    if (mode === 'podcast') {
+    if (mode === 'picture_book') {
+      // 🔹 Try loading from local storage first
+      chrome.storage.local.get(['storybook_sections'], async (result) => {
+        if (result.storybook_sections) {
+          storybook = result.storybook_sections;
+          currentPage = 0;
+          storybookView.classList.remove('hidden');
+          resultElement.innerText = "Use navigation to view the storybook.";
+          updateStorybookPage();
+        } else {
+          // fallback: fetch from backend if not in storage
+          const data = await fetchContent(mode, url, level);
+          if (data.storybook_sections) {
+            storybook = data.storybook_sections;
+            currentPage = 0;
+            storybookView.classList.remove('hidden');
+            resultElement.innerText = "Use navigation to view the storybook.";
+            updateStorybookPage();
+          }
+        }
+      });
+    } else if (mode === 'podcast') {
+      const data = await fetchContent(mode, url, level);
       resultElement.innerText = data.simplified || data.raw || "No content available";
       audioPlayer.classList.remove('hidden');
       if (data.audio_url) {
@@ -75,13 +96,8 @@ document.getElementById('next-page').addEventListener('click', () => {
           audioStatus.textContent = "Error loading podcast audio";
         };
       }
-    } else if (mode === 'picture_book' && data.storybook_sections) {
-      storybook = data.storybook_sections;
-      currentPage = 0;
-      storybookView.classList.remove('hidden');
-      resultElement.innerText = "Use navigation to view the storybook.";
-      updateStorybookPage();
     } else {
+      const data = await fetchContent(mode, url, level);
       resultElement.innerText = data.simplified || data.raw || "No content available";
     }
   } catch (error) {
