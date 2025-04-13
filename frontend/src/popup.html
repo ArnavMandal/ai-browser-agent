@@ -11,28 +11,31 @@
       <h1>StorySimplify</h1>
       <p>Select a mode and grade level</p>
     </div>
+
     <div class="popup-controls">
       <label>Explain Level: <span id="level-value">5</span></label>
       <input type="range" id="explain-level" class="accentuity-slider" min="1" max="12" value="5" />
+
       <div class="button-tabs">
         <button class="tab-btn active" data-type="simplify">Simplify</button>
         <button class="tab-btn" data-type="picture_book">Picture Book</button>
         <button class="tab-btn" data-type="podcast">Podcast</button>
         <button class="tab-btn" data-type="quiz">Quiz</button>
       </div>
+
       <button id="extract-btn" class="primary-btn">
         <span class="btn-text">Extract & Process</span>
         <div class="loading-spinner hidden"></div>
       </button>
-      <div class="popup-result" id="result" style="margin-top: 20px;"></div>
-
     </div>
 
-    <!-- Show simplified output here -->
-    <div class="popup-result" id="result" style="margin-top: 20px;"></div>
+    <!-- Output containers -->
+    <div id="result" class="popup-result" style="margin-top: 20px;"></div>
+    <div id="quiz-container" class="popup-result hidden" style="margin-top: 20px;"></div>
 
     <div class="popup-footer">StorySimplify Extension</div>
   </div>
+
   <script src="popup.js"></script>
 </body>
 </html>

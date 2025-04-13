@@ -17,11 +17,11 @@ document.getElementById('extract-btn').addEventListener('click', async () => {
   const explainLevel = parseInt(document.getElementById('explain-level').value);
   const btnText = document.querySelector('.btn-text');
   const spinner = document.querySelector('.loading-spinner');
-  const resultElement = document.getElementById('result'); // Add this for simplify output
-  resultElement.innerText = ''; // Clear previous result
+  const resultDiv = document.getElementById("result");
 
   btnText.textContent = 'Processing';
   spinner.classList.remove('hidden');
+  resultDiv.innerHTML = '';
 
   try {
     let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -54,30 +54,31 @@ document.getElementById('extract-btn').addEventListener('click', async () => {
 
     const data = await response.json();
 
-    if (selectedType === 'simplify') {
-      // ✅ Show result directly inside the popup
-      resultElement.innerText = data.simplified || data.raw || "No content available";
-    } else if (selectedType === 'picture_book') {
+    if (selectedType === 'picture_book') {
       await chrome.storage.local.set({ storybook_sections: data.storybook_sections });
       chrome.runtime.sendMessage({
         action: 'openStorybookWindow',
         mode: selectedType,
-        payload: {
-          url,
-          level: explainLevel
-        }
+        payload: { url, level: explainLevel }
       });
-    } else {
+    } else if (selectedType === 'podcast') {
       chrome.runtime.sendMessage({
         action: 'openContentWindow',
-        payload: {
-          ...data,
-          url,
-          level: explainLevel
-        },
+        payload: { ...data, url, level: explainLevel },
         type: selectedType
       });
+    } else if (selectedType === 'quiz') {
+      const cleanedQuiz = (data.simplified || data.raw || '')
+        .replace(/^Q\d+:\s*\{"raw":"[\s\S]*?"simplified":"(.*?)"\}$/, '$1')
+        .replace(/\\n/g, '<br>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+      resultDiv.innerHTML = cleanedQuiz;
+    } else if (selectedType === 'simplify') {
+      const cleanedText = (data.simplified || data.raw || '').replace(/\\n/g, '<br>');
+      resultDiv.innerHTML = cleanedText;
     }
+
   } catch (err) {
     alert('Error connecting to backend.');
     console.error("Request failed:", err);
