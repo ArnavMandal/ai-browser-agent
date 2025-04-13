@@ -16,7 +16,7 @@ SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 BUCKET_NAME = "storybook-images"
 
 # === ClipDrop Config ===
-CLIPDROP_API_KEY = "d1faac072364616a3f125fef6b76c3394370d0c389b3b4647205959ddc4f02ed2acf31f9fffe8b6275e37caab648697e"
+CLIPDROP_API_KEY = "f2119d60a9a701a972c0fe6d0e06b572263cceaa8c01c1bae4c8677f1140d2304f889f0b8d5e8a81ea77a3b5f5867244"
 clipdrop_url = "https://clipdrop-api.co/text-to-image/v1"
 clipdrop_headers = {
     "x-api-key": CLIPDROP_API_KEY,

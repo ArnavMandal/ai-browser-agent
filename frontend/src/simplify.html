@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Simplified View</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="popup-container">
+    <div class="popup-header">
+      <h1>Simplified Content</h1>
+      <p id="mode-display">Loading...</p>
+    </div>
+    <div class="popup-result" id="result">Processing...</div>
+  </div>
+  <script>
+    async function loadSimplified() {
+      const params = new URLSearchParams(location.search);
+      const url = params.get('url');
+      const level = parseInt(params.get('level')) || 5;
+
+      const res = await fetch("http://localhost:8000/process-url", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url, mode: 'simplify', level })
+      });
+
+      const data = await res.json();
+      document.getElementById("result").innerText = data.simplified || data.raw || "No content available";
+      document.getElementById("mode-display").textContent = `Grade: ${level}`;
+    }
+
+    loadSimplified();
+  </script>
+</body>
+</html>

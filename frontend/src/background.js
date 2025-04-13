@@ -6,143 +6,106 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     handleCommand(request.command)
       .then(response => sendResponse({ success: true, message: response }))
       .catch(error => sendResponse({ success: false, message: error.message }));
-    return true; // Required for async response
+    return true;
+  }
+
+  // For all modes opening new windows with content
+  if (request.action === 'openContentWindow') {
+    const mode = request.type || 'simplify';
+    const encodedUrl = encodeURIComponent(request.payload.url || '');
+    const level = request.payload.level || 5;
+
+    let page = 'simplify.html';
+    if (mode === 'podcast') page = 'podcast.html';
+    else if (mode === 'quiz') page = 'quiz.html';
+    else if (mode === 'picture_book') page = 'storybook.html';
+
+    const finalUrl = `${page}?mode=${mode}&url=${encodedUrl}&level=${level}`;
+    chrome.windows.create({
+      url: chrome.runtime.getURL(finalUrl),
+      type: 'popup',
+      width: 1000,
+      height: 800
+    });
+  }
+
+  if (request.action === 'openStorybookWindow') {
+    const mode = request.mode || 'picture_book';
+    const url = request.payload?.url || '';
+    const level = request.payload?.level || 5;
+
+    const finalUrl = `storybook.html?mode=${mode}&url=${encodeURIComponent(url)}&level=${level}`;
+    chrome.windows.create({
+      url: chrome.runtime.getURL(finalUrl),
+      type: 'popup',
+      width: 1000,
+      height: 800
+    });
   }
 });
 
-// Handle different types of commands
+// Text-based command support
 async function handleCommand(command) {
-  try {
-    // Parse the command to determine the action
-    const [action, ...args] = command.toLowerCase().split(' ');
+  const [action, ...args] = command.toLowerCase().split(' ');
 
-    switch (action) {
-      case 'simplify':
-        return await handleSimplifyCommand(args);
-      case 'picture_book':
-        return await handlePictureBookCommand(args);
-      case 'podcast':
-        return await handlePodcastCommand(args);
-      case 'quiz':
-        return await handleQuizCommand(args);
-      default:
-        throw new Error(`Unknown command: ${action}`);
-    }
-  } catch (error) {
-    console.error('Error handling command:', error);
-    throw error;
+  switch (action) {
+    case 'simplify':
+      return await handleSimplifyCommand(args);
+    case 'picture_book':
+      return await handlePictureBookCommand(args);
+    case 'podcast':
+      return await handlePodcastCommand(args);
+    case 'quiz':
+      return await handleQuizCommand(args);
+    default:
+      throw new Error(`Unknown command: ${action}`);
   }
 }
 
-// Handle simplify command
 async function handleSimplifyCommand(args) {
-  if (args.length < 2) {
-    throw new Error('Simplify command requires a URL and grade level');
-  }
-
-  const url = args[0];
-  const gradeLevel = args[1];
-
-  const response = await fetch('http://localhost:8000/process-url', {
+  if (args.length < 2) throw new Error('Simplify command requires a URL and grade level');
+  const [url, level] = args;
+  const res = await fetch('http://localhost:8000/process-url', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      url: url,
-      mode: 'simplify',
-      level: gradeLevel
-    })
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ url, mode: 'simplify', level: parseInt(level) })
   });
-
-  if (!response.ok) {
-    throw new Error(`Failed to process URL: ${response.statusText}`);
-  }
-
-  const data = await response.json();
+  const data = await res.json();
   return data.simplified;
 }
 
-// Handle picture book command
 async function handlePictureBookCommand(args) {
-  if (args.length < 1) {
-    throw new Error('Picture book command requires a URL');
-  }
-
+  if (args.length < 1) throw new Error('Picture book command requires a URL');
   const url = args[0];
-
-  const response = await fetch('http://localhost:8000/process-url', {
+  const res = await fetch('http://localhost:8000/process-url', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      url: url,
-      mode: 'picture_book',
-      level: 3  // Default to 3rd grade level for picture books
-    })
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ url, mode: 'picture_book', level: 3 })
   });
-
-  if (!response.ok) {
-    throw new Error(`Failed to process URL: ${response.statusText}`);
-  }
-
-  const data = await response.json();
+  const data = await res.json();
   return data.simplified;
 }
 
-// Handle podcast command
 async function handlePodcastCommand(args) {
-  if (args.length < 1) {
-    throw new Error('Podcast command requires a URL');
-  }
-
+  if (args.length < 1) throw new Error('Podcast command requires a URL');
   const url = args[0];
-
-  const response = await fetch('http://localhost:8000/process-url', {
+  const res = await fetch('http://localhost:8000/process-url', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      url: url,
-      mode: 'podcast',
-      level: 8  // Default to 8th grade level for podcasts
-    })
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ url, mode: 'podcast', level: 8 })
   });
-
-  if (!response.ok) {
-    throw new Error(`Failed to process URL: ${response.statusText}`);
-  }
-
-  const data = await response.json();
+  const data = await res.json();
   return data.simplified;
 }
 
-// Handle quiz command
 async function handleQuizCommand(args) {
-  if (args.length < 1) {
-    throw new Error('Quiz command requires a URL');
-  }
-
+  if (args.length < 1) throw new Error('Quiz command requires a URL');
   const url = args[0];
-
-  const response = await fetch('http://localhost:8000/process-url', {
+  const res = await fetch('http://localhost:8000/process-url', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      url: url,
-      mode: 'quiz',
-      level: 8  // Default to 8th grade level for quizzes
-    })
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ url, mode: 'quiz', level: 8 })
   });
-
-  if (!response.ok) {
-    throw new Error(`Failed to process URL: ${response.statusText}`);
-  }
-
-  const data = await response.json();
+  const data = await res.json();
   return data.simplified;
-} 
+}

@@ -467,4 +467,19 @@ body, h1, p, label, select, button {
       padding: 16px;
     }
   }
+  .quiz-block {
+    margin-bottom: 20px;
+    padding: 10px;
+    background: #f9fafb;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+  }
+  .question {
+    margin-bottom: 10px;
+  }
+  .choices li {
+    list-style: none;
+    margin-bottom: 6px;
+  }
+  
   

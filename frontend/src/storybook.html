@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>StorySimplify - Storybook</title>
+  <link rel="stylesheet" href="storybook.css" />
+</head>
+<body>
+  <div class="storybook-container">
+    <header class="storybook-header">
+      <h1>📚 Story Time!</h1>
+      <p id="mode-display">Loading...</p>
+    </header>
+
+    <main class="storybook-main">
+      <div class="storybook-page">
+        <div class="storybook-image"></div>
+        <div class="storybook-text"></div>
+      </div>
+      <div id="page-indicator">Page</div>
+      <div class="storybook-nav">
+        <button id="prev-page">← Back</button>
+        <button id="next-page">Next →</button>
+      </div>
+    </main>
+  </div>
+
+  <script src="storybook.js"></script>
+</body>
+</html>
