@@ -1,0 +1,25 @@
+<!-- frontend/src/podcast.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>StorySimplify - Podcast</title>
+  <link rel="stylesheet" href="podcast.css" />
+</head>
+<body>
+  <div class="popup-container">
+    <h1 class="title">🎧 Listen & Learn!</h1>
+    <p class="subtitle" id="mode-display">Mode: podcast</p>
+
+    <div class="popup-result" id="result">Loading summary...</div>
+
+    <div class="audio-player" id="audio-player">
+      <div class="audio-title">Now Playing</div>
+      <audio id="podcast-audio" controls></audio>
+      <div class="audio-status">Loading audio...</div>
+    </div>
+  </div>
+
+  <script src="podcast.js"></script>
+</body>
+</html>

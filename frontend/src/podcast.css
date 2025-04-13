@@ -1,0 +1,60 @@
+body {
+    background: linear-gradient(to bottom right, #fff3f3, #fef9f9);
+    font-family: 'Comic Sans MS', 'Fredoka', cursive, sans-serif;
+  }
+  
+  .popup-container {
+    width: 800px;
+    margin: 50px auto;
+    padding: 32px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .title {
+    font-size: 2.2rem;
+    color: #ff5e9c;
+    margin-bottom: 0.5rem;
+  }
+  
+  .subtitle {
+    color: #555;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .popup-result {
+    background: #fffdfd;
+    border: 2px dashed #f4a8c8;
+    padding: 20px;
+    margin-bottom: 1.5rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    color: #333;
+  }
+  
+  .audio-player {
+    margin-top: 1rem;
+  }
+  
+  .audio-title {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #444;
+  }
+  
+  audio {
+    width: 100%;
+    border-radius: 12px;
+    background: #ffe6f0;
+    box-shadow: 0 2px 6px rgba(255, 94, 156, 0.2);
+  }
+  
+  .audio-status {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #777;
+  }
+  
