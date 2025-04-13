@@ -4,7 +4,7 @@ from PIL import Image
 from io import BytesIO
 from supabase import create_client
 
-def generate_images_and_upload():
+def generate_images_and_upload(simplified_text):
     # === Supabase Config ===
     SUPABASE_URL = "https://rxgcxatjkgbedoajnvlr.supabase.co"
     SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ4Z2N4YXRqa2diZWRvYWpudmxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0OTM1NTQsImV4cCI6MjA2MDA2OTU1NH0.E3MqSTPRKOYAUR-VMIHAA35Shvka1WKLqC0fMUNtBXc"
@@ -28,12 +28,8 @@ def generate_images_and_upload():
         "x-api-key": CLIPDROP_API_KEY,
         "Content-Type": "application/json"
     }
-
+    descriptions = parse_story(simplified_text)
     # === Prompts to Generate
-    descriptions = [
-        "Harold was riding a bike.",
-        "A witch flew over the village at night."
-    ]
 
     image_urls = []
 
@@ -80,7 +76,10 @@ def generate_images_and_upload():
 
     return image_urls
 
-urls = generate_images_and_upload()
-print("\n🖼️ Uploaded Image URLs:")
-for url in urls:
-    print(url)
+#urls = generate_images_and_upload()
+#print("\n🖼️ Uploaded Image URLs:")
+#for url in urls:
+#    print(url)
+
+def parse_story(text):
+    return text.split("???")
