@@ -6,8 +6,7 @@ load_dotenv()
 
 client = genai.Client(api_key="AIzaSyADFGlfGDyraeaHUYiPTZmeGI4S3gq6QQg")
 
-def simplify_text(text: str, level, type) -> str:
-    
+def simplify_text(text: str, level, type="simplify") -> str:
     prompt_input = create_prompt(text, level, type)
     try:
         response = client.models.generate_content(
@@ -22,7 +21,7 @@ def simplify_text(text: str, level, type) -> str:
 def create_prompt(text, level, type):
     if (type == "simplify"):
         return (
-            f"Simplify the following article for a grade {level} reading level while keeping similar length. "
+            f"Simplify the following article for a {level}th-grade reading level while keeping similar length. "
             "Make it friendly and easy to understand.\n\n"
             f"{text}"  # Keep prompt under GPT token limits
         )
