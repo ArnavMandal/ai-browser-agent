@@ -1,31 +1,30 @@
-let selectedType = 'simplify';
+document.addEventListener('DOMContentLoaded', () => {
+  const commandInput = document.getElementById('command');
+  const executeButton = document.getElementById('execute');
+  const responseDiv = document.getElementById('response');
 
-document.getElementById('explain-level').addEventListener('input', (e) => {
-  document.getElementById('level-value').textContent = e.target.value;
-});
+  executeButton.addEventListener('click', async () => {
+    const command = commandInput.value.trim();
+    if (!command) return;
 
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    selectedType = btn.dataset.type;
-    document.querySelector('.btn-text').textContent = 'Extract & Process';
+    try {
+      // Send the command to the background script
+      const response = await chrome.runtime.sendMessage({
+        type: 'EXECUTE_COMMAND',
+        command: command
+      });
+
+      // Display the response
+      responseDiv.textContent = response.message || 'Command executed successfully';
+    } catch (error) {
+      responseDiv.textContent = `Error: ${error.message}`;
+    }
   });
-});
 
-document.getElementById('extract-btn').addEventListener('click', async () => {
-  const level = document.getElementById('explain-level').value;
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  const url = tab.url;
-
-  const queryString = new URLSearchParams({
-    mode: selectedType,
-    url: url,
-    level: level
-  }).toString();
-
-  await chrome.runtime.sendMessage({
-    type: 'OPEN_NEW_WINDOW',
-    url: `storybook.html?${queryString}`
+  // Allow Enter key to trigger the execute button
+  commandInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      executeButton.click();
+    }
   });
-});
+}); 
