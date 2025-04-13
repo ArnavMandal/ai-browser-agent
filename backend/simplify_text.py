@@ -8,7 +8,7 @@ client = genai.Client(api_key="AIzaSyADFGlfGDyraeaHUYiPTZmeGI4S3gq6QQg")
 
 def simplify_text(text: str, level) -> str:
     prompt = (
-        "Simplify the following article for a grade {level} reading level. "
+        f"Simplify the following article for a {level}th-grade reading level. "
         "Use simple words and short sentences. Make it friendly and easy to understand.\n\n"
         f"{text[:3000]}"  # Keep prompt under GPT token limits
     )
