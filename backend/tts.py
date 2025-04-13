@@ -37,7 +37,6 @@ def text_to_speech(text, output_file="output.mp3", voice_id="EXAVITQu4vr4xnSDxMa
     # Remove any sound effect or formatting instructions from the text
     # These patterns like **(Sound Effect: ...)** can cause issues with TTS
     text = re.sub(r'\*\*\([^)]+\)\*\*', '', text)
-    text = re.sub(r'\*\*Host:\*\*', 'Host:', text)
     
     client = ElevenLabs(api_key="sk_7d6914011e75677178bcd9c90156a84f2a2dafaaae1ab897")
     
@@ -55,24 +54,14 @@ def text_to_speech(text, output_file="output.mp3", voice_id="EXAVITQu4vr4xnSDxMa
                 voice=voice_id
             )
             
-            # Handle the audio based on its type
-            with open(output_file, "wb") as f:
-                # If it's a generator (streaming response), consume it chunk by chunk
-                if hasattr(audio, '__iter__') and not isinstance(audio, (bytes, bytearray)):
-                    print("Detected generator response, consuming chunks...")
-                    for chunk in audio:
-                        if chunk:
-                            f.write(chunk)
-                # If it's already bytes, write directly
-                elif isinstance(audio, (bytes, bytearray)):
-                    f.write(audio)
-                # If it's some other object with read method (like a file-like object)
-                elif hasattr(audio, 'read'):
-                    f.write(audio.read())
-                else:
-                    print(f"Unknown audio type: {type(audio)}")
-                    return None
+            # Ensure we actually got binary data back
+            if not isinstance(audio, bytes):
+                print(f"Error: Expected bytes from ElevenLabs, got {type(audio)}")
+                if hasattr(audio, 'read'):  # If it's file-like
+                    audio = audio.read()
             
+            with open(output_file, "wb") as f:
+                f.write(audio)
             print(f"Success! Audio saved to {output_file}")
             return output_file
             
@@ -104,7 +93,6 @@ def text_to_speech_http(text, output_file, voice_id, timeout):
     
     # Remove any sound effect or formatting instructions from the text
     text = re.sub(r'\*\*\([^)]+\)\*\*', '', text)
-    text = re.sub(r'\*\*Host:\*\*', 'Host:', text)
             
     try:
         url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
@@ -120,16 +108,11 @@ def text_to_speech_http(text, output_file, voice_id, timeout):
             }
         }
         
-        # Use stream=True to get a streaming response
-        response = requests.post(url, json=data, headers=headers, timeout=timeout, stream=True)
+        response = requests.post(url, json=data, headers=headers, timeout=timeout)
         response.raise_for_status()
         
         with open(output_file, "wb") as f:
-            # Write the content in chunks to handle large responses
-            for chunk in response.iter_content(chunk_size=1024):
-                if chunk:
-                    f.write(chunk)
-                    
+            f.write(response.content)
         print(f"HTTP fallback success! Saved to {output_file}")
         return output_file
         

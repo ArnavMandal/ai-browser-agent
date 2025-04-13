@@ -41,20 +41,12 @@ async def process_url(req: URLRequest):
         # Generate audio from the cleaned podcast script
         try:
             audio_file = text_to_speech(tts_text, output_file=audio_path)
-            
-            # Verify the file exists and has content
-            if audio_file and os.path.exists(audio_file) and os.path.getsize(audio_file) > 0:
-                audio_url = f"/static/{audio_filename}"
-                print(f"Successfully generated audio: {audio_file}, size: {os.path.getsize(audio_file)} bytes")
-            else:
-                print(f"Audio file generation failed or file is empty")
-                audio_file = None
-                audio_url = None
-                
         except Exception as e:
             print(f"TTS Error: {e}")
             audio_file = None
-            audio_url = None
+        
+        # Create a full URL for the audio file
+        audio_url = f"/static/{audio_filename}" if audio_file else None
         
         return {
             "raw": raw_text,
