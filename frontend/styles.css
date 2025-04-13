@@ -7,7 +7,8 @@ body, h1, p, label, select, button {
   
   /* Overall popup container */
   .popup-container {
-    width: 360px;
+    width: 400px;
+    max-width: 100%;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background-color: #ffffff;
     border-radius: 16px;
@@ -19,7 +20,19 @@ body, h1, p, label, select, button {
   /* Header styles */
   .popup-header {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+  }
+  
+  .logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  
+  .logo-container svg {
+    color: #3b82f6;
   }
   
   .popup-header h1 {
@@ -27,6 +40,10 @@ body, h1, p, label, select, button {
     font-weight: 600;
     color: #1a1a1a;
     margin-bottom: 8px;
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
   
   .popup-header p {
@@ -61,7 +78,20 @@ body, h1, p, label, select, button {
     color: #666;
   }
   
-  input[type="range"] {
+  .level-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 8px;
+    background: #ebf5ff;
+    color: #3b82f6;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  /* Accentuity slider style */
+  .accentuity-slider {
     -webkit-appearance: none;
     width: 100%;
     height: 6px;
@@ -71,56 +101,72 @@ body, h1, p, label, select, button {
     transition: background 0.3s;
   }
   
-  input[type="range"]::-webkit-slider-thumb {
+  .accentuity-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     width: 20px;
     height: 20px;
-    background: #3b82f6;
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
     border-radius: 50%;
     cursor: pointer;
     transition: all 0.3s;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
   
-  input[type="range"]::-webkit-slider-thumb:hover {
-    background: #2563eb;
+  .accentuity-slider::-webkit-slider-thumb:hover {
     transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
   }
   
   .content-type-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
   }
   
-  .button-group {
+  /* Modern Tabs UI */
+  .button-tabs {
     display: flex;
-    gap: 8px;
+    background: #f3f4f6;
+    border-radius: 12px;
+    padding: 4px;
+    position: relative;
+    overflow: hidden;
   }
   
-  .content-type-btn {
+  .tab-btn {
     flex: 1;
-    padding: 8px 12px;
-    border: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border: none;
     border-radius: 8px;
-    background: white;
-    color: #4b5563;
+    background: transparent;
+    color: #64748b;
     font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    z-index: 1;
   }
   
-  .content-type-btn:hover {
-    background: #f3f4f6;
-    transform: translateY(-1px);
+  .tab-btn svg {
+    transition: transform 0.2s ease;
   }
   
-  .content-type-btn.active {
-    background: #3b82f6;
-    color: white;
-    border-color: #3b82f6;
+  .tab-btn:hover svg {
+    transform: scale(1.1);
   }
   
+  .tab-btn.active {
+    color: #3b82f6;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Primary button */
   .primary-btn {
     display: flex;
     align-items: center;
@@ -128,24 +174,51 @@ body, h1, p, label, select, button {
     gap: 8px;
     width: 100%;
     padding: 12px;
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     color: white;
     font-size: 16px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .primary-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0.2),
+      rgba(255, 255, 255, 0)
+    );
+    transition: left 0.7s;
   }
   
   .primary-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
+  }
+  
+  .primary-btn:hover::before {
+    left: 100%;
+  }
+  
+  .primary-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 8px rgba(59, 130, 246, 0.2);
   }
   
   .loading-spinner {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 50%;
     border-top-color: white;
@@ -159,15 +232,15 @@ body, h1, p, label, select, button {
   /* Result section */
   .popup-result {
     background-color: #f9fafb;
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 16px;
     font-size: 14px;
     color: #1a1a1a;
     max-height: 300px;
     overflow-y: auto;
-    opacity: 0;
     animation: fadeIn 0.5s forwards;
     line-height: 1.6;
+    border: 1px solid #e5e7eb;
   }
   
   /* Footer styles */
@@ -178,26 +251,14 @@ body, h1, p, label, select, button {
     font-size: 12px;
   }
   
-  /* Keyframes for fade in animation */
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-  
+  /* Audio player */
   .audio-player {
     margin-top: 16px;
     padding: 16px;
     background: #f3f4f6;
-    border-radius: 8px;
+    border-radius: 10px;
     animation: slideUp 0.3s ease-out;
+    border: 1px solid #e5e7eb;
   }
   
   .audio-player.hidden {
@@ -207,18 +268,136 @@ body, h1, p, label, select, button {
   .audio-player audio {
     width: 100%;
     height: 40px;
-    border-radius: 4px;
+    outline: none;
+    border-radius: 8px;
   }
   
-  /* Add Framer Motion-like animations */
+  /* Storybook view */
+  .storybook-view {
+    margin-top: 16px;
+    animation: fadeIn 0.3s ease-out;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e5e7eb;
+  }
+  
+  .storybook-view.hidden {
+    display: none;
+  }
+  
+  .storybook-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 12px;
+    background: linear-gradient(to right, #f5f7fa, #f9fafb);
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: white;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  }
+  
+  .nav-btn:hover {
+    background: #f3f4f6;
+    color: #3b82f6;
+    transform: translateY(-1px);
+  }
+  
+  .nav-btn:active {
+    transform: translateY(0);
+  }
+  
+  .nav-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  
+  #page-indicator {
+    font-size: 14px;
+    font-weight: 500;
+    color: #64748b;
+  }
+  
+  .storybook-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+    background: white;
+  }
+  
+  .storybook-image {
+    width: 100%;
+    height: 200px;
+    background: #f3f4f6;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .storybook-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .storybook-image:hover img {
+    transform: scale(1.03);
+  }
+  
+  .storybook-text {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #374151;
+  }
+  
+  /* Keyframes for animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
   @keyframes slideUp {
     from {
       opacity: 0;
-      transform: translateY(20px);
+      transform: translateY(10px);
     }
     to {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 480px) {
+    .popup-container {
+      width: 100%;
+      border-radius: 0;
+      padding: 16px;
     }
   }
   

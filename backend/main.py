@@ -2,8 +2,10 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
 from text_extractor import extract_clean_text_from_url
 from simplify_text import simplify_text
+from image_gen import generate_storybook_images
 from tts import text_to_speech
 import os
 import uuid
@@ -11,12 +13,21 @@ import re
 
 app = FastAPI()
 
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
+
 # Mount the static directory
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 class URLRequest(BaseModel):
     url: str
-    mode: str  # "simplify", "picture_book", or "narrate"
+    mode: str  # "simplify", "picture_book", "podcast", "quiz"
     level: int = 8  # Default reading level
 
 @app.post("/process-url")
@@ -53,6 +64,28 @@ async def process_url(req: URLRequest):
             "simplified": simplified,
             "audio_url": audio_url,
             "audio_path": audio_path if audio_file else None  # Include the local path for debugging
+        }
+    elif req.mode == "picture_book":
+        # Split the story into sections (marked by "???")
+        story_sections = simplified.split("???")
+        story_sections = [section.strip() for section in story_sections if section.strip()]
+        
+        # Generate images for each section
+        image_urls = generate_storybook_images(story_sections)
+        
+        # Create a combined response with text sections and images
+        storybook_sections = []
+        for i, section in enumerate(story_sections):
+            image_url = image_urls[i] if i < len(image_urls) else None
+            storybook_sections.append({
+                "text": section,
+                "image_url": image_url
+            })
+        
+        return {
+            "raw": raw_text,
+            "simplified": simplified,
+            "storybook_sections": storybook_sections
         }
     else:
         # For other modes, just return the simplified text

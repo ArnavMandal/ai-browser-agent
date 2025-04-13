@@ -7,19 +7,30 @@
   <link rel="stylesheet" href="styles.css">
   <!-- Add Framer Motion -->
   <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+  <!-- Add Tailwind for ShadCN components -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Add ShadCN-style class utilities -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="bg-gray-50">
   <div class="popup-container">
     <header class="popup-header">
-      <h1>AI Browser Agent</h1>
+      <div class="logo-container">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h1>AI Browser Agent</h1>
+      </div>
       <p>Need help understanding an article? Let me simplify it for you!</p>
     </header>
 
     <section class="popup-controls">
       <div class="control-group">
-        <label for="explain-level">Reading Level: <span id="level-value">8</span></label>
+        <label for="explain-level">Reading Level: <span id="level-value" class="level-badge">8</span></label>
         <div class="slider-container">
-          <input type="range" id="explain-level" min="6" max="12" value="8" step="1">
+          <input type="range" id="explain-level" min="6" max="12" value="8" step="1" class="accentuity-slider">
           <div class="slider-marks">
             <span>6</span>
             <span>8</span>
@@ -31,10 +42,35 @@
 
       <div class="content-type-group">
         <label>Content Type:</label>
-        <div class="button-group">
-          <button class="content-type-btn active" data-type="simplify">Simplify</button>
-          <button class="content-type-btn" data-type="podcast">Podcast</button>
-          <button class="content-type-btn" data-type="quiz">Quiz</button>
+        <div class="button-tabs">
+          <button class="tab-btn active" data-type="simplify">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 7H21M3 12H21M3 17H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Simplify
+          </button>
+          <button class="tab-btn" data-type="picture_book">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 6H4.5L6.5 18H17.5L19.5 6H22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M9 10H13C13.5523 10 14 9.55228 14 9C14 8.44772 13.5523 8 13 8H11C10.4477 8 10 7.55228 10 7C10 6.44772 10.4477 6 11 6H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M18.1 19C19.1493 19 20 18.1493 20 17.1C20 16.0507 19.1493 15.2 18.1 15.2C17.0507 15.2 16.2 16.0507 16.2 17.1C16.2 18.1493 17.0507 19 18.1 19Z" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            Storybook
+          </button>
+          <button class="tab-btn" data-type="podcast">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 14C13.1046 14 14 13.1046 14 12V6C14 4.89543 13.1046 4 12 4C10.8954 4 10 4.89543 10 6V12C10 13.1046 10.8954 14 12 14Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M19 9V12C19 15.866 15.866 19 12 19M5 9V12C5 15.866 8.13401 19 12 19M12 19V22M8 22H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Podcast
+          </button>
+          <button class="tab-btn" data-type="quiz">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 11L12 14L20 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M20 12V17C20 18.6569 18.6569 20 17 20H7C5.34315 20 4 18.6569 4 17V7C4 5.34315 5.34315 4 7 4H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Quiz
+          </button>
         </div>
       </div>
 
@@ -52,6 +88,31 @@
       <audio id="podcast-audio" controls>
         Your browser does not support the audio element.
       </audio>
+    </section>
+
+    <section id="storybook-view" class="storybook-view hidden">
+      <!-- The storybook content will be displayed here -->
+      <div class="storybook-navigation">
+        <button id="prev-page" class="nav-btn" disabled>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <span id="page-indicator">Page 1 of 5</span>
+        <button id="next-page" class="nav-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="storybook-content">
+        <div class="storybook-image">
+          <!-- Image will be displayed here -->
+        </div>
+        <div class="storybook-text">
+          <!-- Text will be displayed here -->
+        </div>
+      </div>
     </section>
 
     <footer class="popup-footer">
