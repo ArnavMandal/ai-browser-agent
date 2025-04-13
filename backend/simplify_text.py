@@ -33,7 +33,7 @@ def create_prompt(text, level, type):
         )
     elif (type == "podcast"):
         return (
-            "Rewrite the following article as a podcast script without queues in it."
+            "Rewrite the following article as a podcast script without queues in it. Don't mention like who's talking, just give the words"
             "Make it engaging.\n\n"
             f"{text[:5000]}"
         )
